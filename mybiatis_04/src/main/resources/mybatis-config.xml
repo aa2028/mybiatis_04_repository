@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+
+    <!--引入properties文件-->
+    <properties resource="jdbc.properties" />
+
+    <settings>
+        <!-- 开启驼峰标识, 数据库为下划线命名规则, 而实体类为驼峰标识, 不开启此选项无法查询出数据-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 全局设置成懒惰[true]  , 但是默认的是积极[false]-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 当开启时，任何方法的调用都会加载该对象的所有属性。否则，每个属性会按需加载-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+    <!--设置类型别名-->
+    <typeAliases>
+        <!--
+        typeAlias：设置某个类型的别名属性：
+        type：设置需要设置别名的类型
+        alias：设置某个类型的别名，若不设置该属性，那么该类型拥有默认的别名，即类名
+        且不区分大小写
+        -->
+        <!-- <typeAlias type="com.softeem.pojo.User"></typeAlias>-->
+
+        <!--以包为单位，将包下所有的类型设置默认的类型别名，即类名且不区分大小写-->
+        <!-- com.softeem.mybatis.pojo.User -> user-->
+        <package name="com.softeem.pojo"/>
+    </typeAliases>
+
+    <plugins>
+        <!--设置分页插件-->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="supportMethodsArguments" value="true"/>
+<!--            分页合理化参数，默认值为false。当该参数设置为 true 时，
+                pageNum<=0 时会查询第一页， pageNum>pages（超过总数时），会查询最后一页。
+                默认false 时，直接根据参数进行查询。-->
+            <property name="reasonable" value="true"/>
+<!--            分页插件会自动检测当前的数据库链接，自动选择合适的分页方式。 你可以配置helperDialect属性来指定分页插件使用哪种方言。配置时，可以使用下面的缩写值：-->
+<!--            oracle,mysql,mariadb,sqlite,hsqldb,postgresql,db2,sqlserver,informix,h2,sqlserver2012,derby-->
+            <property name="helperDialect" value="mysql"/>
+        </plugin>
+    </plugins>
+
+    <!--设置连接数据库的环境-->
+    <!--
+        environments：配置多个连接数据库的环境属性：
+        default：设置默认使用的环境的id
+    -->
+    <environments default="development">
+        <!--
+        environment：配置某个具体的环境属性：
+        id：表示连接数据库的环境的唯一标识，不能重复
+        -->
+        <environment id="development">
+            <!--
+                transactionManager：设置事务管理方式属性：
+                type="JDBC|MANAGED"
+                JDBC：表示当前环境中，执行SQL时，使用的是JDBC中原生的事务管理方式，事 务的提交或回滚需要手动处理
+                MANAGED：被管理，例如Spring
+                -->
+            <transactionManager type="JDBC"/>
+            <!--
+            dataSource：配置数据源属性：
+                type：设置数据源的类型type="POOLED|UNPOOLED|JNDI"
+                    POOLED：表示使用数据库连接池缓存数据库连接
+                    UNPOOLED：表示不使用数据库连接池
+                    JNDI：表示使用上下文中的数据源
+            -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--引入映射文件-->
+    <mappers>
+        <!-- <mapper resource="mappers/UserMapper.xml"/>-->
+
+        <!--
+        以包为单位引入映射文件要求：
+        1、mapper接口所在的包要和映射文件所在的包一致
+        2、mapper接口要和映射文件的名字一致
+        -->
+        <package name="com.softeem.mapper"/>
+        <package name="com.softeem.peijie"/>
+    </mappers>
+</configuration>
